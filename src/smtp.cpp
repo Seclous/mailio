@@ -304,6 +304,7 @@ inline bool smtp::permanent_negative(int status)
 smtps::smtps(const string& hostname, unsigned port, milliseconds timeout)
 	: smtps(hostname, port, std::make_shared<context>(context::sslv23), timeout)
 {
+    _tls_context->set_verify_mode(context::verify_none);
 }
 
 smtps::smtps(const string& hostname, unsigned port, shared_ptr<context> tls_context, milliseconds timeout)

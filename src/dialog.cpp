@@ -238,7 +238,6 @@ dialog_ssl::dialog_ssl(const dialog& other, std::shared_ptr<context> tls_context
 {
     try
     {
-        _ssl_socket->set_verify_mode(boost::asio::ssl::verify_none);
         _ssl_socket->handshake(boost::asio::ssl::stream_base::client);
         _ssl = true;
     }
