@@ -209,14 +209,15 @@ public:
     @param hostname Server hostname.
     @param port     Server port.
     @param timeout  Network timeout after which I/O operations fail. If zero, then no timeout is set i.e. I/O operations are synchronous.
+    @param tls_context TLS context to use
     @throw *        `dialog::dialog(const std::string&, unsigned)`.
     **/
-    dialog_ssl(const std::string& hostname, unsigned port, std::chrono::milliseconds timeout);
+    dialog_ssl(const std::string& hostname, unsigned port, std::chrono::milliseconds timeout, std::shared_ptr<boost::asio::ssl::context> tls_context);
 
     /**
     Calling the parent constructor, initializing the SSL socket.
     **/
-    dialog_ssl(const dialog& other);
+    dialog_ssl(const dialog& other, std::shared_ptr<boost::asio::ssl::context> tls_context);
 
     /**
     Default copy constructor.

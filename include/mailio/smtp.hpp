@@ -236,6 +236,20 @@ public:
     smtps(const std::string& hostname, unsigned port, std::chrono::milliseconds timeout = std::chrono::milliseconds(0));
 
     /**
+    Making a connection to the server.
+
+    Parent constructor is called to do all the work.
+
+    @param hostname Hostname of the server.
+    @param port     Port of the server.
+    @param tls_context TLS context to use for the server connection.
+    @param timeout  Network timeout after which I/O operations fail. If zero, then no timeout is set i.e. I/O operations are synchronous.
+    @throw *        `smtp::smtp(const string&, unsigned)`.
+    **/
+    smtps(const std::string& hostname, unsigned port, std::shared_ptr<boost::asio::ssl::context> tls_context,
+        std::chrono::milliseconds timeout = std::chrono::milliseconds(0));
+
+    /**
     Sending the quit command and closing the connection.
 
     Parent destructor is called to do all the work.
@@ -277,6 +291,9 @@ protected:
     @throw * `dialog_ssl::dialog_ssl(dialog_ssl&&)`.
     **/
     void switch_to_ssl();
+
+    /* TLS context */
+    std::shared_ptr<boost::asio::ssl::context> _tls_context;
 };
 
 
