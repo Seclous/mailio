@@ -24,6 +24,7 @@ copy at http://www.freebsd.org/copyright/freebsd-license.html.
 using std::ostream;
 using std::istream;
 using std::vector;
+using std::shared_ptr;
 using std::string;
 using std::to_string;
 using std::tuple;
@@ -35,6 +36,7 @@ using std::out_of_range;
 using std::invalid_argument;
 using std::chrono::milliseconds;
 using boost::asio::ip::host_name;
+using boost::asio::ssl::context;
 using boost::system::system_error;
 
 
@@ -299,7 +301,14 @@ inline bool smtp::permanent_negative(int status)
 }
 
 
-smtps::smtps(const string& hostname, unsigned port, milliseconds timeout) : smtp(hostname, port, timeout)
+smtps::smtps(const string& hostname, unsigned port, milliseconds timeout)
+	: smtps(hostname, port, std::make_shared<context>(context::sslv23), timeout)
+{
+    _tls_context->set_verify_mode(context::verify_none);
+}
+
+smtps::smtps(const string& hostname, unsigned port, shared_ptr<context> tls_context, milliseconds timeout)
+	: smtp(hostname, port, timeout), _tls_context(std::move(tls_context))
 {
 }
 
@@ -346,7 +355,7 @@ void smtps::start_tls()
 
 void smtps::switch_to_ssl()
 {
-    _dlg = make_shared<dialog_ssl>(*_dlg);
+    _dlg = make_shared<dialog_ssl>(*_dlg, _tls_context);
 }
 
 

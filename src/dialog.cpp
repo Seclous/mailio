@@ -226,19 +226,18 @@ void dialog::check_timeout(const boost::system::error_code& error, shared_ptr<tc
 }
 
 
-dialog_ssl::dialog_ssl(const string& hostname, unsigned port, milliseconds timeout) :
-    dialog(hostname, port, timeout), _ssl(false), _context(make_shared<context>(context::sslv23)),
+dialog_ssl::dialog_ssl(const string& hostname, unsigned port, milliseconds timeout, std::shared_ptr<context> tls_context) :
+    dialog(hostname, port, timeout), _ssl(false), _context(std::move(tls_context)),
     _ssl_socket(make_shared<boost::asio::ssl::stream<tcp::socket&>>(*_socket, *_context))
 {
 }
 
 
-dialog_ssl::dialog_ssl(const dialog& other) : dialog(other), _context(make_shared<context>(context::sslv23)),
+dialog_ssl::dialog_ssl(const dialog& other, std::shared_ptr<context> tls_context) : dialog(other), _context(std::move(tls_context)),
     _ssl_socket(make_shared<boost::asio::ssl::stream<tcp::socket&>>(*(dialog::_socket), *_context))
 {
     try
     {
-        _ssl_socket->set_verify_mode(boost::asio::ssl::verify_none);
         _ssl_socket->handshake(boost::asio::ssl::stream_base::client);
         _ssl = true;
     }
