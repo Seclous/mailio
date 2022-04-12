@@ -29,6 +29,7 @@ using std::vector;
 using std::map;
 using std::runtime_error;
 using std::out_of_range;
+using std::shared_ptr;
 using std::invalid_argument;
 using std::stoi;
 using std::stol;
@@ -39,6 +40,7 @@ using std::make_tuple;
 using std::move;
 using std::make_shared;
 using std::chrono::milliseconds;
+using boost::asio::ssl::context;
 using boost::algorithm::trim;
 using boost::iequals;
 
@@ -337,7 +339,14 @@ tuple<string, string> pop3::parse_status(const string& line)
 }
 
 
-pop3s::pop3s(const string& hostname, unsigned port, milliseconds timeout) : pop3(hostname, port, timeout)
+pop3s::pop3s(const string& hostname, unsigned port, milliseconds timeout)
+	: pop3s(hostname, port, std::make_shared<context>(context::sslv23), timeout)
+{
+    _tls_context->set_verify_mode(context::verify_none);
+}
+
+pop3s::pop3s(const string& hostname, unsigned port, shared_ptr<context> tls_context, milliseconds timeout)
+	: pop3(hostname, port, timeout), _tls_context(std::move(tls_context))
 {
 }
 
@@ -378,7 +387,7 @@ void pop3s::start_tls()
 
 void pop3s::switch_to_ssl()
 {
-    _dlg = make_shared<dialog_ssl>(*_dlg);
+    _dlg = make_shared<dialog_ssl>(*_dlg, _tls_context);
 }
 
 

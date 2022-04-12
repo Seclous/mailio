@@ -45,6 +45,7 @@ using std::to_string;
 using std::tuple;
 using std::vector;
 using std::chrono::milliseconds;
+using boost::asio::ssl::context;
 using boost::system::system_error;
 using boost::iequals;
 using boost::regex;
@@ -1324,7 +1325,14 @@ list<shared_ptr<imap::response_token_t>>* imap::find_last_token_list(list<shared
 }
 
 
-imaps::imaps(const string& hostname, unsigned port, milliseconds timeout) : imap(hostname, port, timeout)
+imaps::imaps(const string& hostname, unsigned port, milliseconds timeout)
+	: imaps(hostname, port, std::make_shared<context>(context::sslv23), timeout)
+{
+    _tls_context->set_verify_mode(context::verify_none);
+}
+
+imaps::imaps(const string& hostname, unsigned port, std::shared_ptr<boost::asio::ssl::context> tls_context, milliseconds timeout)
+	: imap(hostname, port, timeout), _tls_context(std::move(tls_context))
 {
 }
 
@@ -1364,7 +1372,7 @@ void imaps::start_tls()
 
 void imaps::switch_to_ssl()
 {
-    _dlg = std::make_shared<dialog_ssl>(*_dlg);
+    _dlg = std::make_shared<dialog_ssl>(*_dlg, _tls_context);
 }
 
 

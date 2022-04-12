@@ -868,6 +868,21 @@ public:
     **/
     imaps(const std::string& hostname, unsigned port, std::chrono::milliseconds timeout = std::chrono::milliseconds(0));
 
+    
+    /**
+    Making a connection to the server.
+
+    Calls parent constructor to do all the work.
+
+    @param hostname Hostname of the server.
+    @param port     Port of the server.
+    @param tls_context TLS context to use for the server connection.
+    @param timeout  Network timeout after which I/O operations fail. If zero, then no timeout is set i.e. I/O operations are synchronous.
+    @throw *        `imap::imap(const std::string&, unsigned)`.
+    **/
+    imaps(const std::string& hostname, unsigned port, std::shared_ptr<boost::asio::ssl::context> tls_context,
+        std::chrono::milliseconds timeout = std::chrono::milliseconds(0));
+
     /**
     Sending the logout command and closing the connection.
 
@@ -910,6 +925,11 @@ protected:
     @throw * `dialog_ssl::dialog_ssl(dialog_ssl&&)`.
     **/
     void switch_to_ssl();
+    
+    /*
+    TLS context
+    */
+    std::shared_ptr<boost::asio::ssl::context> _tls_context;
 };
 
 

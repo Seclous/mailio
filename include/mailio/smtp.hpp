@@ -292,7 +292,9 @@ protected:
     **/
     void switch_to_ssl();
 
-    /* TLS context */
+    /*
+    TLS context
+    */
     std::shared_ptr<boost::asio::ssl::context> _tls_context;
 };
 
