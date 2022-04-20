@@ -482,6 +482,11 @@ protected:
     static const std::string CONTENT_DISPOSITION_HEADER;
 
     /**
+    Content id header name.
+    **/
+    static const std::string CONTENT_ID_HEADER;
+
+    /**
     Content disposition attachment string.
     **/
     static const std::string CONTENT_DISPOSITION_ATTACHMENT;
@@ -615,6 +620,13 @@ protected:
     @return Content disposition as string.
     **/
     std::string format_content_disposition() const;
+
+    /**
+    Formatting content id to a string.
+
+    @return Content id as string.
+    **/
+    std::string format_content_id() const;
 
     /**
     Formats mime name.

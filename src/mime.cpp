@@ -89,6 +89,7 @@ const string mime::CONTENT_TRANSFER_ENCODING_BIT8{"8bit"};
 const string mime::CONTENT_TRANSFER_ENCODING_QUOTED_PRINTABLE{"Quoted-Printable"};
 const string mime::CONTENT_TRANSFER_ENCODING_BINARY{"Binary"};
 const string mime::CONTENT_DISPOSITION_HEADER{"Content-Disposition"};
+const string mime::CONTENT_ID_HEADER{"Content-ID"};
 const string mime::CONTENT_DISPOSITION_ATTACHMENT{"attachment"};
 const string mime::CONTENT_DISPOSITION_INLINE{"inline"};
 const string mime::NEW_LINE_INDENT{"  "};
@@ -425,7 +426,7 @@ mime::header_codec_t mime::header_codec() const
 
 string mime::format_header() const
 {
-    return format_content_type() + format_transfer_encoding() + format_content_disposition();
+    return format_content_type() + format_transfer_encoding() + format_content_disposition() + format_content_id();
 }
 
 
@@ -590,6 +591,18 @@ string mime::format_content_disposition() const
     }
 
     return line;
+}
+
+string mime::format_content_id() const
+{
+    string line;
+
+    if(!content_id().empty())
+    {
+        line = CONTENT_ID_HEADER + HEADER_SEPARATOR_STR + codec::LESS_THAN_CHAR + content_id() + codec::GREATER_THAN_CHAR + codec::END_OF_LINE;
+    }
+
+	return line;
 }
 
 
