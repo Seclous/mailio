@@ -16,6 +16,12 @@ copy at http://www.freebsd.org/copyright/freebsd-license.html.
 #include <boost/algorithm/string/classification.hpp>
 #include <mailio/dialog.hpp>
 
+#if __has_include("boost/certify/https_verification.hpp")
+#include <boost/certify/https_verification.hpp>
+#include <boost/certify/extensions.hpp>
+#define MAILIO_CERTIFY_AVAILABLE true;
+#endif
+
 
 using std::string;
 using std::to_string;
@@ -238,6 +244,14 @@ dialog_ssl::dialog_ssl(const dialog& other, std::shared_ptr<context> tls_context
 {
     try
     {
+#ifdef MAILIO_CERTIFY_AVAILABLE
+		// Sets the expected server hostname, which will be checked during the cert verification
+        boost::certify::set_server_hostname(*_ssl_socket, _hostname);
+        
+	    // Set SNI Hostname (many hosts need this to handshake successfully)
+	    boost::certify::sni_hostname(*_ssl_socket, _hostname);
+#endif
+
         _ssl_socket->handshake(boost::asio::ssl::stream_base::client);
         _ssl = true;
     }
