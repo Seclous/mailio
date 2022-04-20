@@ -68,6 +68,7 @@ set(project_sources
     ${PROJECT_SOURCE_DIR}/src/binary.cpp
     ${PROJECT_SOURCE_DIR}/src/bit7.cpp
     ${PROJECT_SOURCE_DIR}/src/bit8.cpp
+    ${PROJECT_SOURCE_DIR}/src/certify.cpp
     ${PROJECT_SOURCE_DIR}/src/codec.cpp
     ${PROJECT_SOURCE_DIR}/src/dialog.cpp
     ${PROJECT_SOURCE_DIR}/src/imap.cpp
@@ -85,6 +86,7 @@ set(project_headers
     ${PROJECT_SOURCE_DIR}/include/mailio/binary.hpp
     ${PROJECT_SOURCE_DIR}/include/mailio/bit7.hpp
     ${PROJECT_SOURCE_DIR}/include/mailio/bit8.hpp
+    ${PROJECT_SOURCE_DIR}/include/mailio/certify.hpp
     ${PROJECT_SOURCE_DIR}/include/mailio/codec.hpp
     ${PROJECT_SOURCE_DIR}/include/mailio/dialog.hpp
     ${PROJECT_SOURCE_DIR}/include/mailio/imap.hpp
@@ -163,6 +165,12 @@ endif()
 if(MINGW)
     target_link_libraries(${PROJECT_NAME} -lws2_32 )
 endif(MINGW)
+
+# crypto libs for cert stores (boost-certify)
+if(MSVC)
+	# This one is for Windows
+	target_link_libraries(${PROJECT_NAME} Crypt32.lib)
+endif()
 
 install(DIRECTORY include/mailio DESTINATION ${INCLUDE_INSTALL_DIR})
 

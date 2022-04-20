@@ -233,9 +233,10 @@ public:
     @param hostname Hostname of the server.
     @param port     Port of the server.
     @param timeout  Network timeout after which I/O operations fail. If zero, then no timeout is set i.e. I/O operations are synchronous.
+    @param verify_certs If true, use a modern TLS context with cert validation.
     @throw *        `pop3::pop3(const string&, unsigned)`.
     **/
-    pop3s(const std::string& hostname, unsigned port, std::chrono::milliseconds timeout = std::chrono::milliseconds(0));
+    pop3s(const std::string& hostname, unsigned port, std::chrono::milliseconds timeout = std::chrono::milliseconds(0), bool verify_certs = false);
 
     /**
     Making a connection to server.
