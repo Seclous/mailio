@@ -295,6 +295,20 @@ public:
     content_disposition_t content_disposition() const;
 
     /**
+    Setting the content id.
+
+    @param content_id Content id to set.
+    **/
+    void content_id(const std::string& content_id);
+
+    /**
+    Getting the content id.
+
+    @return Content id.
+    **/
+    std::string content_id() const;
+
+    /**
     Setting the boundary of the mime part.
 
     @param bound String to be used as the boundary.
@@ -468,6 +482,11 @@ protected:
     static const std::string CONTENT_DISPOSITION_HEADER;
 
     /**
+    Content id header name.
+    **/
+    static const std::string CONTENT_ID_HEADER;
+
+    /**
     Content disposition attachment string.
     **/
     static const std::string CONTENT_DISPOSITION_ATTACHMENT;
@@ -603,6 +622,13 @@ protected:
     std::string format_content_disposition() const;
 
     /**
+    Formatting content id to a string.
+
+    @return Content id as string.
+    **/
+    std::string format_content_id() const;
+
+    /**
     Formats mime name.
 
     The name has to fit to mandatory line policy, otherwise the rest is truncated.
@@ -682,6 +708,16 @@ protected:
     @throw *                `parse_header_value_attributes(const string&, string&, map<string, string>&)`.
     **/
     void parse_content_disposition(const std::string& content_disp_hdr, content_disposition_t& disposition, attributes_t& attributes) const;
+
+    /**
+    Parsing the content disposition value and attributes.
+
+    @param content_id_hdr   Content id header without name.
+    @param content_id       Content id value parsed.
+    @throw mime_error       Parsing content id failure.
+    @throw *                `parse_header_value_attributes(const string&, string&, map<string, string>&)`.
+    **/
+    void parse_content_id(const std::string& content_id_hdr, std::string& content_id) const;
 
     /**
     Parsing value and attributes of the so called content headers.
@@ -781,6 +817,11 @@ protected:
     Content disposition of the mime part.
     **/
     content_disposition_t _disposition;
+
+    /**
+    Content id of the mime part.
+    **/
+    std::string _content_id;
 
     /**
     Raw representation of the content.

@@ -89,6 +89,7 @@ const string mime::CONTENT_TRANSFER_ENCODING_BIT8{"8bit"};
 const string mime::CONTENT_TRANSFER_ENCODING_QUOTED_PRINTABLE{"Quoted-Printable"};
 const string mime::CONTENT_TRANSFER_ENCODING_BINARY{"Binary"};
 const string mime::CONTENT_DISPOSITION_HEADER{"Content-Disposition"};
+const string mime::CONTENT_ID_HEADER{"Content-ID"};
 const string mime::CONTENT_DISPOSITION_ATTACHMENT{"attachment"};
 const string mime::CONTENT_DISPOSITION_INLINE{"inline"};
 const string mime::NEW_LINE_INDENT{"  "};
@@ -312,6 +313,18 @@ mime::content_disposition_t mime::content_disposition() const
 }
 
 
+void mime::content_id(const std::string& content_id)
+{
+    _content_id = content_id;
+}
+
+
+std::string mime::content_id() const
+{
+    return _content_id;
+}
+
+
 void mime::boundary(const string& bound)
 {
     _boundary = bound;
@@ -413,7 +426,7 @@ mime::header_codec_t mime::header_codec() const
 
 string mime::format_header() const
 {
-    return format_content_type() + format_transfer_encoding() + format_content_disposition();
+    return format_content_type() + format_transfer_encoding() + format_content_disposition() + format_content_id();
 }
 
 
@@ -580,6 +593,18 @@ string mime::format_content_disposition() const
     return line;
 }
 
+string mime::format_content_id() const
+{
+    string line;
+
+    if(!content_id().empty())
+    {
+        line = CONTENT_ID_HEADER + HEADER_SEPARATOR_STR + codec::LESS_THAN_CHAR + content_id() + codec::GREATER_THAN_CHAR + codec::END_OF_LINE;
+    }
+
+	return line;
+}
+
 
 string mime::format_mime_name(const string& name) const
 {
@@ -723,6 +748,10 @@ void mime::parse_header_line(const string& header_line)
             _name = qc.check_decode(filename_it->second);
         }
     }
+    else if (iequals(header_name, CONTENT_ID_HEADER))
+    {
+        parse_content_id(header_value, _content_id);
+    }
 }
 
 
@@ -827,6 +856,43 @@ void mime::parse_content_disposition(const string& content_disp_hdr, content_dis
         else
             disposition = content_disposition_t::ATTACHMENT;
     }
+}
+
+
+void mime::parse_content_id(const string& content_id_hdr, string& content_id) const
+{
+	if(content_id_hdr.empty())
+    {
+        if (_strict_mode)
+            throw mime_error("Parsing content id failure.");
+        return;
+    }
+
+    size_t offset {1};
+    size_t length { content_id_hdr.size() - 2};
+    if(content_id_hdr.at(0) != codec::LESS_THAN_CHAR)
+    {
+        if (_strict_mode)
+            throw mime_error("Parsing content id failure.");
+        offset--;
+    }
+
+    if(content_id_hdr.at(content_id_hdr.size() - 1) != codec::GREATER_THAN_CHAR)
+    {
+        if (_strict_mode)
+            throw mime_error("Parsing content id failure.");
+        length++;
+    }
+
+    if((offset + length) <= content_id_hdr.size())
+    {
+		content_id = content_id_hdr.substr(offset, length);
+    }
+	else
+    {
+	    content_id = content_id_hdr;
+    }
+
 }
 
 
