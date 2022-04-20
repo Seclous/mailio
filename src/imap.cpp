@@ -24,6 +24,7 @@ copy at http://www.freebsd.org/copyright/freebsd-license.html.
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 #include <boost/regex.hpp>
+#include <mailio/certify.hpp>
 #include <mailio/imap.hpp>
 
 
@@ -1325,10 +1326,13 @@ list<shared_ptr<imap::response_token_t>>* imap::find_last_token_list(list<shared
 }
 
 
-imaps::imaps(const string& hostname, unsigned port, milliseconds timeout)
-	: imaps(hostname, port, std::make_shared<context>(context::sslv23), timeout)
+imaps::imaps(const string& hostname, unsigned port, milliseconds timeout, bool verify_certs)
+	: imaps(hostname, port, verify_certs ? std::make_shared<context>(certify::create_context()) : std::make_shared<context>(context::sslv23), timeout)
 {
-    _tls_context->set_verify_mode(context::verify_none);
+	if(!verify_certs)
+    {
+		_tls_context->set_verify_mode(context::verify_none);
+    }
 }
 
 imaps::imaps(const string& hostname, unsigned port, std::shared_ptr<boost::asio::ssl::context> tls_context, milliseconds timeout)

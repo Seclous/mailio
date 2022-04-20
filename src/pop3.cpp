@@ -19,8 +19,8 @@ copy at http://www.freebsd.org/copyright/freebsd-license.html.
 #include <chrono>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <mailio/certify.hpp>
 #include <mailio/pop3.hpp>
-
 
 using std::istream;
 using std::string;
@@ -339,10 +339,13 @@ tuple<string, string> pop3::parse_status(const string& line)
 }
 
 
-pop3s::pop3s(const string& hostname, unsigned port, milliseconds timeout)
-	: pop3s(hostname, port, std::make_shared<context>(context::sslv23), timeout)
+pop3s::pop3s(const string& hostname, unsigned port, milliseconds timeout, bool verify_certs)
+	: pop3s(hostname, port, verify_certs ? std::make_shared<context>(certify::create_context()) : std::make_shared<context>(context::sslv23), timeout)
 {
-    _tls_context->set_verify_mode(context::verify_none);
+	if(!verify_certs)
+    {
+		_tls_context->set_verify_mode(context::verify_none);
+    }
 }
 
 pop3s::pop3s(const string& hostname, unsigned port, shared_ptr<context> tls_context, milliseconds timeout)
