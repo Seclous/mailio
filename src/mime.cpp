@@ -312,6 +312,18 @@ mime::content_disposition_t mime::content_disposition() const
 }
 
 
+void mime::content_id(const std::string& content_id)
+{
+    _content_id = content_id;
+}
+
+
+std::string mime::content_id() const
+{
+    return _content_id;
+}
+
+
 void mime::boundary(const string& bound)
 {
     _boundary = bound;

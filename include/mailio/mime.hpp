@@ -295,6 +295,20 @@ public:
     content_disposition_t content_disposition() const;
 
     /**
+    Setting the content id.
+
+    @param content_id Content id to set.
+    **/
+    void content_id(const std::string& content_id);
+
+    /**
+    Getting the content id.
+
+    @return Content id.
+    **/
+    std::string content_id() const;
+
+    /**
     Setting the boundary of the mime part.
 
     @param bound String to be used as the boundary.
@@ -781,6 +795,11 @@ protected:
     Content disposition of the mime part.
     **/
     content_disposition_t _disposition;
+
+    /**
+    Content id of the mime part.
+    **/
+    std::string _content_id;
 
     /**
     Raw representation of the content.
