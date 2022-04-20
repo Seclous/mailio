@@ -710,6 +710,16 @@ protected:
     void parse_content_disposition(const std::string& content_disp_hdr, content_disposition_t& disposition, attributes_t& attributes) const;
 
     /**
+    Parsing the content disposition value and attributes.
+
+    @param content_id_hdr   Content id header without name.
+    @param content_id       Content id value parsed.
+    @throw mime_error       Parsing content id failure.
+    @throw *                `parse_header_value_attributes(const string&, string&, map<string, string>&)`.
+    **/
+    void parse_content_id(const std::string& content_id_hdr, std::string& content_id) const;
+
+    /**
     Parsing value and attributes of the so called content headers.
 
     @param header     Header (without name) to be parsed.

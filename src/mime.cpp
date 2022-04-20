@@ -748,6 +748,10 @@ void mime::parse_header_line(const string& header_line)
             _name = qc.check_decode(filename_it->second);
         }
     }
+    else if (iequals(header_name, CONTENT_ID_HEADER))
+    {
+        parse_content_id(header_value, _content_id);
+    }
 }
 
 
@@ -852,6 +856,43 @@ void mime::parse_content_disposition(const string& content_disp_hdr, content_dis
         else
             disposition = content_disposition_t::ATTACHMENT;
     }
+}
+
+
+void mime::parse_content_id(const string& content_id_hdr, string& content_id) const
+{
+	if(content_id_hdr.empty())
+    {
+        if (_strict_mode)
+            throw mime_error("Parsing content id failure.");
+        return;
+    }
+
+    size_t offset {1};
+    size_t length { content_id_hdr.size() - 2};
+    if(content_id_hdr.at(0) != codec::LESS_THAN_CHAR)
+    {
+        if (_strict_mode)
+            throw mime_error("Parsing content id failure.");
+        offset--;
+    }
+
+    if(content_id_hdr.at(content_id_hdr.size() - 1) != codec::GREATER_THAN_CHAR)
+    {
+        if (_strict_mode)
+            throw mime_error("Parsing content id failure.");
+        length++;
+    }
+
+    if((offset + length) <= content_id_hdr.size())
+    {
+		content_id = content_id_hdr.substr(offset, length);
+    }
+	else
+    {
+	    content_id = content_id_hdr;
+    }
+
 }
 
 
