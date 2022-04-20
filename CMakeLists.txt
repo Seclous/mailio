@@ -164,6 +164,12 @@ if(MINGW)
     target_link_libraries(${PROJECT_NAME} -lws2_32 )
 endif(MINGW)
 
+# crypto libs for cert stores (boost-certify)
+if(MSVC)
+	# This one is for Windows
+	target_link_libraries(${PROJECT_NAME} Crypt32.lib)
+endif()
+
 install(DIRECTORY include/mailio DESTINATION ${INCLUDE_INSTALL_DIR})
 
 install(TARGETS ${PROJECT_NAME}
