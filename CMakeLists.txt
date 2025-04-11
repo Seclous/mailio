@@ -144,7 +144,7 @@ configure_file(mailio.pc.in ${CMAKE_BINARY_DIR}/mailio.pc IMMEDIATE @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/mailio.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
 configure_file(${PROJECT_SOURCE_DIR}/include/version.hpp.in version.hpp)
-install(FILES ${CMAKE_BINARY_DIR}/version.hpp DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME})
+install(FILES ${PROJECT_BINARY_DIR}/version.hpp DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME})
 
 # generate the export header for exporting symbols
 # this is needed to generate a shared library.
